@@ -10,7 +10,7 @@ class OpenMMLabInstaller(Installer):
 
     def install(self) -> None:
         launch.run_pip(
-            'install openmim "mmsegmentation>=1.0.0" huggingface_hub mmdet',
+            'install openmim "mmsegmentation>=1.0.0" huggingface_hub mmdet "protobuf<=3.20.3"',
             "requirements for openmmlab inferencers of Face Editor",
         )
         cmd = "mim"
