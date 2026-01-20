@@ -1,4 +1,6 @@
 from typing import List
+import launch
+import importlib.util
 
 from face_editor.use_cases.installer import Installer
 
@@ -8,7 +10,10 @@ class InsightFaceInstaller(Installer):
         return "InsightFace"
 
     def requirements(self) -> List[str]:
-        return ['"insightface>=0.7.3"', "onnxruntime"]
+        reqs = ['"insightface>=0.7.3"']
+        if importlib.util.find_spec("onnxruntime") is None:
+            reqs.append("onnxruntime")
+        return reqs
 
     def install(self) -> None:
         try:
