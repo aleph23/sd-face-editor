@@ -8,4 +8,4 @@ class MediaPipeInstaller(Installer):
         return "MediaPipe"
 
     def requirements(self) -> List[str]:
-        return ["mediapipe"]
+        return ["mediapipe<=0.10.5", "protobuf<=3.20.3"]

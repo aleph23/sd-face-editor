@@ -8,11 +8,15 @@ except Exception:
     from face_editor.io.util import load_classes_from_directory
 
 import traceback
+import sys
 
 import launch
 from modules import shared
 
 from face_editor.use_cases.installer import Installer
+
+if sys.version_info >= (3, 12):
+    print("Warning: Python versions beyond 3.11 are not officially supported by Face Editor yet.")
 
 if not shared.opts:
     from modules import shared_init
