@@ -1,10 +1,12 @@
 import os
+import traceback
 
 import gradio as gr
 from face_editor.entities.option import Option
-from face_editor.io.util import inferencers_dir
+from face_editor.io.util import inferencers_dir, load_classes_from_directory_
 from face_editor.ui import workflow_editor
 from face_editor.ui.param_value_parser import ParamValueParser
+from face_editor.use_cases.installer import Installer
 from modules import script_callbacks, shared
 
 
@@ -201,10 +203,37 @@ def on_ui_settings():
             if entry.is_dir() and entry.name[0].isalnum():
                 additional_components.append(entry.name)
 
+    def on_additional_components_change():
+        components = shared.opts.data.get("face_editor_additional_components", [])
+        if not components:
+            return
+
+        print(f"Face Editor: Installing dependencies for {', '.join(components)}...")
+        for component in components:
+            try:
+                classes = load_classes_from_directory_(
+                    Installer, os.path.join(inferencers_dir, component), True
+                )
+                for cls in classes:
+                    try:
+                        cls().install()
+                    except Exception as e:
+                        print(traceback.format_exc())
+                        print(f"Face Editor: Failed to install dependencies for {component}: {e}")
+            except Exception as e:
+                print(f"Face Editor: Error loading installer for {component}: {e}")
+
+        print("Face Editor: Installation attempts complete. PLEASE RESTART THE SERVER if new packages were installed.")
+
     shared.opts.add_option(
         "face_editor_additional_components",
         shared.OptionInfo(
-            [], "Additional components", gr.CheckboxGroup, {"choices": additional_components}, section=section
+            [],
+            "Additional components (requires server restart)",
+            gr.CheckboxGroup,
+            {"choices": additional_components},
+            section=section,
+            onchange=on_additional_components_change,
         ),
     )
 

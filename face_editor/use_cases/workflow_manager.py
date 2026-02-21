@@ -16,7 +16,15 @@ from PIL import Image
 class WorkflowManager:
     @classmethod
     def get(cls, workflow: str) -> "WorkflowManager":
-        manager = cls(Workflow.parse_raw(workflow))
+        try:
+            manager = cls(Workflow.model_validate_json(workflow))
+        except Exception:
+            # Fallback for older Pydantic or different format if needed, though model_validate_json is standard for v2
+            # For backward compatibility if parse_raw is still present in some mix environments
+            if hasattr(Workflow, "parse_raw"):
+                manager = cls(Workflow.parse_raw(workflow))
+            else:
+                raise
 
         for face_detector in manager.workflow.face_detector:
             if face_detector.name not in registry.face_detector_names:

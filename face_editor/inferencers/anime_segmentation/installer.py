@@ -8,4 +8,9 @@ class AnimeSegmentationInstaller(Installer):
         return "AnimeSegmentation"
 
     def requirements(self) -> List[str]:
-        return ["huggingface_hub", "onnxruntime"]
+        reqs = ["huggingface_hub"]
+        try:
+            import onnxruntime  # noqa: F401
+        except ImportError:
+            reqs.append("onnxruntime")
+        return reqs

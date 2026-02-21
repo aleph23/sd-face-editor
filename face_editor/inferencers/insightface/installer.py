@@ -8,7 +8,12 @@ class InsightFaceInstaller(Installer):
         return "InsightFace"
 
     def requirements(self) -> List[str]:
-        return ['"insightface>=0.7.3"', "onnxruntime"]
+        reqs = ['"insightface>=0.7.3"']
+        try:
+            import onnxruntime  # noqa: F401
+        except ImportError:
+            reqs.append("onnxruntime")
+        return reqs
 
     def install(self) -> None:
         try:
