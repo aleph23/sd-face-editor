@@ -1,4 +1,4 @@
-# You only want main in you're on Automatic1111. Otherwise look for the branch named after your SDUI (so far just Forge Neo has been tested)
+## **Install this branch (forge-neo) for Forge NEO compatibility**
 
 # Face Editor
 Face Editor for Stable Diffusion. This Extension is useful for the following purposes:
