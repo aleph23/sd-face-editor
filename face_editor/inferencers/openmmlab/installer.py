@@ -10,6 +10,10 @@ class OpenMMLabInstaller(Installer):
 
     def install(self) -> None:
         launch.run_pip(
+            "install --no-deps openxlab",
+            "openxlab for occlusion masking",
+        )
+        launch.run_pip(
             'install "mmcv>=2.0.0" mmengine "mmsegmentation>=1.0.0" huggingface_hub mmdet',
             "requirements for openmmlab inferencers of Face Editor",
         )
