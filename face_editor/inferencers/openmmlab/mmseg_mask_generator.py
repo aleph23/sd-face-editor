@@ -1,22 +1,30 @@
 from typing import Tuple
 
+import os
+
 import cv2
 import modules.shared as shared
 import numpy as np
 from face_editor.use_cases.mask_generator import MaskGenerator
 from huggingface_hub import hf_hub_download
 from mmseg.apis import inference_model, init_model
+from modules.paths_internal import models_path
 
 
 class MMSegMaskGenerator(MaskGenerator):
     def __init__(self):
+        local_dir = os.path.join(models_path, "face-occlusion")
         checkpoint_file = hf_hub_download(
-            repo_id="ototadana/occlusion-aware-face-segmentation",
+            repo_id="a13ph/occlusion-aware-face-segmentation",
             filename="deeplabv3plus_r101_512x512_face-occlusion-93ec6695.pth",
+            revision="befd908d302f0eb1a55089492c62ea297212c433",
+            local_dir=local_dir,
         )
         config_file = hf_hub_download(
-            repo_id="ototadana/occlusion-aware-face-segmentation",
+            repo_id="a13ph/occlusion-aware-face-segmentation",
             filename="deeplabv3plus_r101_512x512_face-occlusion.py",
+            revision="befd908d302f0eb1a55089492c62ea297212c433",
+            local_dir=local_dir,
         )
         self.model = init_model(config_file, checkpoint_file, device=shared.device)
 
