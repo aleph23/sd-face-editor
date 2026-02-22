@@ -13,10 +13,12 @@ class MMSegMaskGenerator(MaskGenerator):
         checkpoint_file = hf_hub_download(
             repo_id="a13ph/occlusion-aware-face-segmentation",
             filename="deeplabv3plus_r101_512x512_face-occlusion-93ec6695.pth",
+            revision="befd908d302f0eb1a55089492c62ea297212c433",
         )
         config_file = hf_hub_download(
             repo_id="a13ph/occlusion-aware-face-segmentation",
             filename="deeplabv3plus_r101_512x512_face-occlusion.py",
+            revision="befd908d302f0eb1a55089492c62ea297212c433",
         )
         self.model = init_model(config_file, checkpoint_file, device=shared.device)
 
