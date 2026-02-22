@@ -11,11 +11,11 @@ from mmseg.apis import inference_model, init_model
 class MMSegMaskGenerator(MaskGenerator):
     def __init__(self):
         checkpoint_file = hf_hub_download(
-            repo_id="ototadana/occlusion-aware-face-segmentation",
+            repo_id="a13ph/occlusion-aware-face-segmentation",
             filename="deeplabv3plus_r101_512x512_face-occlusion-93ec6695.pth",
         )
         config_file = hf_hub_download(
-            repo_id="ototadana/occlusion-aware-face-segmentation",
+            repo_id="a13ph/occlusion-aware-face-segmentation",
             filename="deeplabv3plus_r101_512x512_face-occlusion.py",
         )
         self.model = init_model(config_file, checkpoint_file, device=shared.device)
