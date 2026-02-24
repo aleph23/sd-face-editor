@@ -55,6 +55,9 @@ def load_classes_from_directory(base_class: Type, installer: bool = False) -> Li
 
 def load_classes_from_directory_(base_class: Type, dir: str, installer: bool) -> List[Type]:
     all_classes = []
+    if not os.path.isdir(dir):
+        return all_classes
+
     for file in os.listdir(dir):
         if installer and "install" not in file:
             continue

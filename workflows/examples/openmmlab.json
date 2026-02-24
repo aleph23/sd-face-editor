@@ -1,9 +1,0 @@
-{
-    "face_detector": "RetinaFace",
-    "rules": {
-        "then": {
-            "face_processor": "img2img",
-            "mask_generator": "MMSeg"
-        }
-    }
-}
