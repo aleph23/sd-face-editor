@@ -329,6 +329,7 @@ In this project, the components used in the workflow are also referred to as "in
 - [InsightFace components](face_editor/inferencers/insightface/README.md)
 - [Mediapipe components](face_editor/inferencers/mediapipe/README.md)
 - [YOLO components](face_editor/inferencers/yolo/README.md)
+- [YOLOv11 components](face_editor/inferencers/yolov11/README.md)
 
 
 ### Workflow JSON Reference
