@@ -1,0 +1,66 @@
+import gradio as gr
+from modules import scripts_postprocessing, shared
+from modules.processing import StableDiffusionProcessingImg2Img
+from modules import images, infotext_utils
+
+from face_editor.entities.option import Option
+from face_editor.ui import workflow_editor
+from face_editor.use_cases.image_processor import ImageProcessor
+from face_editor.use_cases.workflow_manager import WorkflowManager
+
+class FaceEditorPostprocessing(scripts_postprocessing.ScriptPostprocessing):
+    name = "Face Editor"
+    order = 4000  # after upscalers; tune via Settings anyway
+
+    def ui(self):
+        with gr.Accordion("Face Editor", open=False):
+            enable = gr.Checkbox(label="Enable", value=False)
+            workflow = gr.Dropdown(choices=workflow_editor.get_files(), value="default", label="Workflow")
+            prompt = gr.Textbox(label="Prompt for face", lines=2)
+            negative = gr.Textbox(label="Negative prompt", lines=1)
+            strength = gr.Slider(0.1, 0.8, value=Option.DEFAULT_STRENGTH1, step=0.05, label="Denoising strength")
+            steps = gr.Slider(1, 50, value=20, step=1, label="Steps")
+            sampler = gr.Dropdown(choices=[s.name for s in shared.list_samplers()], value="Euler a", label="Sampler")
+        # keys here become kwargs of process()
+        return {
+            "enable": enable, "workflow": workflow, "prompt": prompt,
+            "negative": negative, "strength": strength, "steps": steps, "sampler": sampler,
+        }
+
+    def process(self, pp, enable, workflow, prompt, negative, strength, steps, sampler):
+        if not enable:
+            return
+            
+        seed = -1
+        geninfo, _ = images.read_info_from_image(pp.image)
+        if geninfo:
+            params = infotext_utils.parse_generation_parameters(geninfo)
+        try:
+            seed = int(params.get("Seed", -1))
+        except (TypeError, ValueError):
+            seed = -1
+            
+        p = StableDiffusionProcessingImg2Img(
+            init_images=[pp.image],
+            prompt=prompt,
+            negative_prompt=negative,
+            steps=steps,
+            sampler_name=sampler,
+            denoising_strength=strength,
+            width=pp.image.width,
+            height=pp.image.height,
+        )
+        p.do_not_save_samples = True
+        p.scripts = None
+        option = Option({
+            "workflow": workflow_editor.load_workflow(workflow),
+            "strength1": strength,
+            "prompt_for_face": prompt,
+            "save_original_image": False,
+            "show_original_image": False,
+        })
+        
+        proc = ImageProcessor(WorkflowManager.get(option.workflow)).proc_image(p, option)
+        if proc and proc.images:
+            pp.image = proc.images[0]
+            pp.info["Face Editor"] = workflow
